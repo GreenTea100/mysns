@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import AppRouter from "./Router";
 import { authService } from "../fbase";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
-import { async } from "@firebase/util";
 
 function App() {
   const [init, setInit] = useState(false);
