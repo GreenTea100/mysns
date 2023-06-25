@@ -8,7 +8,6 @@ import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 const Nweet = ({nweetObj, isOwner}) => {
     const [editing, setEditing] = useState(false);
     const [newNweet, setNewNweet] = useState(nweetObj.text);
-    const [newD, setD] = useState(nweetObj.createAt);
     const NweetTextRef = doc(dbService,"nweets",`${nweetObj.id}`);
     const desertRef = ref(storageService, nweetObj.attachmentUrl);
     const onDeleteClick = async () => {
@@ -22,6 +21,20 @@ const Nweet = ({nweetObj, isOwner}) => {
             
         }
     };
+
+    var date = new Date(nweetObj.createAt);//타임스탬프를 인자로 받아 Date 객체 생성
+
+    /* 생성한 Date 객체에서 년, 월, 일, 시, 분을 각각 문자열 곧바로 추출 */
+    var year = date.getFullYear().toString().slice(-2); //년도 뒤에 두자리
+    var month = ("0" + (date.getMonth() + 1)).slice(-2); //월 2자리 (01, 02 ... 12)
+    var day = ("0" + date.getDate()).slice(-2); //일 2자리 (01, 02 ... 31)
+    var hour = ("0" + date.getHours()).slice(-2); //시 2자리 (00, 01 ... 23)
+    var minute = ("0" + date.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
+    var second = ("0" + date.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
+
+    var returnDate = year + "년" + month + "월" + day + "일 " + hour + "시" + minute + "분";
+
+
     const toggleEditng = () =>setEditing((prev) => !prev);
     const onSubmit = async(event) => {
         event.preventDefault();
@@ -59,9 +72,11 @@ const Nweet = ({nweetObj, isOwner}) => {
             </>
         ) : (
             <>
-             <h4>{nweetObj.text}</h4>
-    
-             <h4>{nweetObj.createAt}</h4>
+            <h4>닉네임 {returnDate}</h4>
+            <h4>'</h4>
+            <h4>{nweetObj.text}</h4>
+             
+
 
 
             {nweetObj.attachmentUrl && <img src={nweetObj.attachmentUrl}/>}
