@@ -6,31 +6,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPencilAlt, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { async } from "@firebase/util";
-import { Tag } from "@mui/icons-material";
 
-const Nweet = ({nweetObj, isOwner, userObj}) => {
+const Shortload = ({isOwner, userObj, shortObj}) => {
     const [editing, setEditing] = useState(false);
-    const [newNweet, setNewNweet] = useState(nweetObj.text);
-    const NweetTextRef = doc(dbService,"nweets",`${nweetObj.id}`);
-    const desertRef = ref(storageService, nweetObj.attachmentUrl);
-    let LikeNum = nweetObj.likes;
-    
+    const [newShort, setNewShort] = useState(shortObj.text);
+    const ShortTextRef = doc(dbService,"shorts",`${shortObj.id}`);
+    const desertRef = ref(storageService, shortObj.attachmentUrl);
+    let LikeNum = shortObj.likes;
 
-    //게시글 삭제 버튼
+
+
+
+    //쇼츠 삭제 버튼
     const onDeleteClick = async () => {
         const ok = window.confirm("삭제하시겠습니까?");
         if(ok){
             //delete
-            await deleteDoc(NweetTextRef);
-            if (nweetObj.attachmentUrl !== ""){
+            await deleteDoc(ShortTextRef);
+            if (shortObj.attachmentUrl !== ""){
                 await deleteObject(desertRef);
             }
-            toast('삭제 완료!');
+            //toast("삭제 완료!");
         }
     };
 
-    var date = new Date(nweetObj.createAt);//타임스탬프를 인자로 받아 Date 객체 생성
+    var date = new Date(shortObj.createAt);//타임스탬프를 인자로 받아 Date 객체 생성
 
     /* 생성한 Date 객체에서 년, 월, 일, 시, 분을 각각 문자열 곧바로 추출 */
     var year = date.getFullYear(); //년도 2자리
@@ -41,53 +41,55 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
    
     var returnDate = year-2000 + "." + month + "." + day + "   " + hour + ":" + minute;
 
-    //게시글 수정 토글 버튼
+    //쇼츠 수정 토글 버튼
     const toggleEditng = () =>setEditing((prev) => !prev);
 
-    //게시글 수정 확인 버튼
+    //쇼츠 수정 확인 버튼
     const onSubmit = async(event) => {
         event.preventDefault();
-        await updateDoc(NweetTextRef,{
-            text: newNweet,
+        await updateDoc(ShortTextRef,{
+            text: newShort,
         });
         setEditing(false);
-        toast('수정 완료!');
+        //toast("수정 완료!");
+        
     };
 
     const onChange = (event) => {
         const {
             target: {value},
         } = event;
-        setNewNweet(value);
+        setNewShort(value);
     };
 
     //좋아요 버튼
     const onClickLikes = async (event) => {
         event.preventDefault();
+
         
-        //nweetObj.TF를 판단하여 T이면 Likes(+1), F이면 Likes(-1)
-        if(nweetObj.TF){
+        
+        if(shortObj.TF){
             LikeNum += 1;
-            await updateDoc(NweetTextRef,{
+            await updateDoc(ShortTextRef,{
                 likes: LikeNum,
                 TF: false,
             });
-            toast('Like ♥');
+            //toast('Like ♥');
         }else{
             LikeNum -= 1;
-            await updateDoc(NweetTextRef,{
+            await updateDoc(ShortTextRef,{
                 likes: LikeNum,
                 TF: true,
             });
-            toast('unLike :(');
+            //toast('unLike :(');
         }     
     }
 
     
     return (
-    <div  className="nweet">
+    <div className="container">
         <ToastContainer
-                    position="bottom-center" // 알람 위치 지정
+                    position="left" // 알람 위치 지정
                     autoClose={2000} // 자동 off 시간
                     hideProgressBar={true} // 진행시간바 숨김
                     closeOnClick // 클릭으로 알람 닫기
@@ -97,14 +99,14 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
                     //pauseOnHover // 마우스를 올리면 알람 정지
                     theme="light"
                     limit={3} // 알람 개수 제한
-                />
+        />
         {editing ? (
             <>
             <form onSubmit={onSubmit} className="container nweetEdit">
                 <input
                     type="text"
-                    placeholder="Edit"
-                    defaultValue={newNweet}
+                    placeholder="본문 내용"
+                    defaultValue={newShort}
                     required
                     autoFocus
                     onChange={onChange}
@@ -118,28 +120,13 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
             
             </>
         ) : (
-            <form>
-                <div className="nweet_row">
-                    <img src={nweetObj.profileImg} style={{width:60, height:60, borderRadius:100}}/>
-                    <h2>{nweetObj.displayname}</h2>
-                    <h4>{returnDate}</h4>
-                </div>
+            <form className="short">
+                <form className="short_row">
+                    {<img src={shortObj.profileImg} style={{width:40, height:40, borderRadius:100}}/>}
+                    <h2 style={{margin:10}}>{shortObj.displayname}</h2>
+                </form>
                 <br></br>
-                <br></br>
-                <h3>{nweetObj.text}</h3>
-                <br></br>
-                {nweetObj.attachmentUrl && <img src={nweetObj.attachmentUrl} className="nweetImg"/>}
-                <br></br>
-                <span onClick={onClickLikes} className="nweet_likes">
-                    {nweetObj.likes}
-                    {nweetObj.TF ? (
-                        <FontAwesomeIcon icon={faHeart} style={{marginLeft:5,color:"black"}}/>
-                    ):(
-                        <FontAwesomeIcon icon={faHeart} style={{marginLeft:5,color:"red"}}/>
-                    )}
-                    
-                </span>
-                
+                <h3>{shortObj.text}</h3>
                 {isOwner && (
                     <div className="nweet__actions">
                         <span onClick={toggleEditng}>
@@ -149,11 +136,22 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
                             <FontAwesomeIcon icon={faTrash}/>
                         </span>    
                     </div>
-                )}
+                    )
+                }
+                <br></br>
+                <video src={shortObj.attachmentUrl} className="short_video" controls loop/>
+                <span onClick={onClickLikes} className="short_likes">
+                    {shortObj.likes}
+                    {shortObj.TF ? (
+                        <FontAwesomeIcon icon={faHeart} style={{marginLeft:5,color:"black",cursor:"pointer"}}/>
+                    ):(
+                        <FontAwesomeIcon icon={faHeart} style={{marginLeft:5,color:"red",cursor:"pointer"}}/>
+                    )}
+                </span>
             </form>
         )}
         
     </div>
 )
 };
-export default Nweet;
+export default Shortload;

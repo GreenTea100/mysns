@@ -3,11 +3,8 @@ import React from "react";
 import { GithubAuthProvider,GoogleAuthProvider,signInWithPopup } from "firebase/auth";
 import AuthForm from "components/AuthForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faGoogle,
-  faGithub,
-} from "@fortawesome/free-brands-svg-icons";
-import { faCrown } from "@fortawesome/free-solid-svg-icons";
+import {faGoogle,faGithub} from "@fortawesome/free-brands-svg-icons";
+
 
 const Auth = () => {
     const onSocialClick = async (event) => {
@@ -23,7 +20,7 @@ const Auth = () => {
     };
     return (
     <div className="authContainer">
-        <FontAwesomeIcon icon={faCrown} color={"#50AF49"} size="4x" style={{marginBottom: 30}}/>
+        <img src={require('./threetrees.png')} width={200} height={160} style={{marginBottom: 20}}/>
         <AuthForm/>
         <div className="authBtns">
             <button onClick={onSocialClick} name="google" className="authBtn">
