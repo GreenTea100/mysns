@@ -8,6 +8,7 @@ import NweetFactory from "components/NweetFactory";
 
 const Home = ({userObj}) => {
     const [nweets, setNweets] = useState([]);
+
     
     useEffect(() => {
         const q = query(

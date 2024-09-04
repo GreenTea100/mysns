@@ -8,14 +8,21 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { async } from "@firebase/util";
 import { Tag } from "@mui/icons-material";
+import Modal from "react-modal";
 
 const Nweet = ({nweetObj, isOwner, userObj}) => {
-    const [editing, setEditing] = useState(false);
     const [newNweet, setNewNweet] = useState(nweetObj.text);
     const NweetTextRef = doc(dbService,"nweets",`${nweetObj.id}`);
     const desertRef = ref(storageService, nweetObj.attachmentUrl);
+    const [modalIsOpen_edit, setModalIsOpen_edit] = useState(false);
+    const [attachment, setAttachment] = useState("");
+
     let LikeNum = nweetObj.likes;
     
+
+    let arr = nweetObj.Liker;
+    
+
 
     //게시글 삭제 버튼
     const onDeleteClick = async () => {
@@ -42,15 +49,18 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
     var returnDate = year-2000 + "." + month + "." + day + "   " + hour + ":" + minute;
 
     //게시글 수정 토글 버튼
-    const toggleEditng = () =>setEditing((prev) => !prev);
+    const toggleEditng = () =>setModalIsOpen_edit(true);
+
 
     //게시글 수정 확인 버튼
     const onSubmit = async(event) => {
         event.preventDefault();
+        console.log(attachment)
+        
         await updateDoc(NweetTextRef,{
             text: newNweet,
+            attachment: attachment,
         });
-        setEditing(false);
         toast('수정 완료!');
     };
 
@@ -79,13 +89,107 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
                 likes: LikeNum,
                 TF: true,
             });
-            toast('unLike :(');
         }     
     }
+
+
+
+    //사진 파일 감지
+    const onFileChange = (event) => {
+        const {
+            target: {files},
+        } = event;
+        const theFile = files[0];
+        const reader = new FileReader();
+        reader.onloadend = (finishedEvent) => {
+            const {
+                currentTarget: {result},
+            } = finishedEvent;
+            setAttachment(result);
+        };
+        if(theFile){
+        reader.readAsDataURL(theFile);
+        }
+      };
+
+      //사진 대기 비우기
+    const onClearAttachment = () => setAttachment("");
+
+
+    const customModalStyles = {
+        overlay: {
+          backgroundColor: " rgba(0, 0, 0, 0.6)",
+          width: "100%",
+          height: "100vh",
+          zIndex: "10",
+          position: "fixed",
+          top: "0",
+          left: "0",
+        },
+        content: {
+          width: "400px",
+          height: "500px",
+          zIndex: "150",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          borderRadius: "10px",
+          boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
+          backgroundColor: "white",
+          justifyContent: "center",
+          overflow: "auto",
+        },
+      };
 
     
     return (
     <div  className="nweet">
+        <Modal
+            isOpen={modalIsOpen_edit}
+            onRequestClose={() => setModalIsOpen_edit(false)}
+            style={customModalStyles}
+            ariaHideApp={false}
+                >
+                <form onSubmit={onSubmit} className="nweetedit_container">
+                    <input
+                        type="text"
+                        placeholder="내용"
+                        className="nweetedit_txtbox"
+                        defaultValue={newNweet}
+                        required
+                        autoFocus
+                        onChange={onChange}
+                    />
+                    {nweetObj.attachmentUrl && <img src={nweetObj.attachmentUrl} idclassName="nweetImg"/>}
+                    <label htmlFor="img_file">
+                    <span>사진 변경</span>
+                    </label>
+                    <input 
+                     id="img_file"
+                     type="file"
+                     accept="image/*"
+                     onChange={onFileChange}
+                     style={{
+                        opacity: 0,
+                      }}
+                />
+                    <img
+                        src={attachment}
+                        style={{
+                            backgroundImage: attachment,
+                        }}
+                    />
+                    <input type="button" onClick={onClearAttachment} value="사진 삭제" />
+
+                    
+                </form>                    
+                <form className="nweetedit_btn">
+                    <input type="submit" className="nweetedit_btnOk" value="완료" />
+                    <input type="button" onClick={() => setModalIsOpen_edit(false)} className="nweetedit_btnNo" value="취소" />
+                </form>
+        </Modal>
+
         <ToastContainer
                     position="bottom-center" // 알람 위치 지정
                     autoClose={2000} // 자동 off 시간
@@ -98,26 +202,6 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
                     theme="light"
                     limit={3} // 알람 개수 제한
                 />
-        {editing ? (
-            <>
-            <form onSubmit={onSubmit} className="container nweetEdit">
-                <input
-                    type="text"
-                    placeholder="Edit"
-                    defaultValue={newNweet}
-                    required
-                    autoFocus
-                    onChange={onChange}
-                    className="formInput"
-                    />
-                    <input type="submit" value="업데이트" className="formBtn"/>
-            </form>
-            <span onClick={toggleEditng} className="formBtn cancelBtn">
-                취소
-            </span>
-            
-            </>
-        ) : (
             <form>
                 <div className="nweet_row">
                     <img src={nweetObj.profileImg} style={{width:60, height:60, borderRadius:100}}/>
@@ -131,6 +215,7 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
                 {nweetObj.attachmentUrl && <img src={nweetObj.attachmentUrl} className="nweetImg"/>}
                 <br></br>
                 <span onClick={onClickLikes} className="nweet_likes">
+                    {nweetObj.Liker}
                     {nweetObj.likes}
                     {nweetObj.TF ? (
                         <FontAwesomeIcon icon={faHeart} style={{marginLeft:5,color:"black"}}/>
@@ -151,9 +236,31 @@ const Nweet = ({nweetObj, isOwner, userObj}) => {
                     </div>
                 )}
             </form>
-        )}
         
     </div>
 )
 };
+
+
+/*
+ <>
+            <form onSubmit={onSubmit} className="container nweetEdit">
+                <input
+                    type="text"
+                    placeholder="Edit"
+                    defaultValue={newNweet}
+                    required
+                    autoFocus
+                    onChange={onChange}
+                    className="formInput"
+                    />
+                    <input type="submit" value="업데이트" className="formBtn"/>
+            </form>
+            <span onClick={toggleEditng} className="formBtn cancelBtn">
+                취소
+            </span>
+            
+            </>
+            */
+
 export default Nweet;

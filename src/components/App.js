@@ -10,6 +10,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState(null);
 
+
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth,async(user) => {
@@ -35,6 +36,7 @@ function App() {
           updateProfile: (args) => updateProfile(args),
         });
         const uid = user.uid;
+
 
       } else {
         setIsLoggedIn(false);

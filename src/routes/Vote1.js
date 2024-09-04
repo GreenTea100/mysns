@@ -28,12 +28,6 @@ const Vote1 = () => {
             setMyvoteC(docSnap.data().countC);
             setMyvoteD(docSnap.data().countD);
 
-            const voteObj = {
-                conutA: myvoteA,
-                countB: myvoteB,
-                countC: myvoteC,
-                countD: myvoteD,
-            }
         }
         catch (e) {
 

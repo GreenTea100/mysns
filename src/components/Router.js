@@ -13,7 +13,7 @@ import Vote3 from "routes/Vote3";
 import Vote4 from "routes/Vote4";
 
 
-const AppRouter = ({refreshUser, isLoggedIn, userObj}) => {
+const AppRouter = ({refreshUser, isLoggedIn, userObj, usersObj}) => {
     return (
         <div
             style={{
@@ -42,7 +42,7 @@ const AppRouter = ({refreshUser, isLoggedIn, userObj}) => {
                     <Route exact path="/vote" element={<Vote userObj={userObj}/>}>
 
                     </Route>
-                    <Route exact path="/profile" element={<Profile userObj={userObj} refreshUser={refreshUser}/>}>
+                    <Route exact path="/profile" element={<Profile usersObj={usersObj} userObj={userObj} refreshUser={refreshUser}/>}>
 
                     </Route>
                     <Route exact path="/vote/1" element={<Vote1 userObj={userObj}/>}>

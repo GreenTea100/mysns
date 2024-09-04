@@ -205,6 +205,20 @@ form {
   background-color: tomato;
 }
 
+
+.profile_updatemodal {
+  cursor: pointer;
+  color: black;
+  font-size: 12px;
+  border-radius: 20px;
+  border: 1px solid gray;
+  text-align: center;
+  position: absolute;
+  right: -80px;
+  background-color: whitesmoke;
+  padding: 7px 10px;
+}
+
 .profile_radioF {
   position: absolute;
   font-size: large;
@@ -272,6 +286,7 @@ form {
   text-size-adjust: auto;
   border-radius: 20px;
   color: white;
+  cursor: pointer;
 }
 
 .factoryInput__label {
@@ -391,6 +406,56 @@ form {
   width: 50px;
   height: 50px;
   margin: 0 auto;
+}
+
+/* 게시글 변경 */
+
+.nweetedit_container {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nweetedit_txtbox {
+  flex-grow: 1;
+  height: 150px;
+  padding: 10px 10px;
+  color: black;
+  background-color: whitesmoke;
+  border: 1px solid #50AF49;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.nweetedit_btn {
+  flex-direction: row;
+}
+.nweetedit_btnOk {
+  position: static;
+  cursor: pointer;
+  width: 130px;
+  padding: 7px 10px;
+  text-align: center;
+  color: white;
+  border-radius: 20px;
+  background-color: #50AF49;
+  cursor: pointer;
+  margin-right: 80px;
+}
+
+.nweetedit_btnNo {
+  position: static;
+  cursor: pointer;
+  width: 130px;
+  padding: 7px 10px;
+  text-align: center;
+  color: white;
+  border-radius: 20px;
+  background-color: tomato;
+
 }
 
 
@@ -555,6 +620,21 @@ form {
 
 /* AuthForm */
 
+.modal_register {
+  width: 100%;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal_title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #50AF49;
+  margin-bottom: 20px;
+}
+
 .authInput {
   max-width: 320px;
   width: 100%;
@@ -608,4 +688,17 @@ form {
   background-color: antiquewhite;
   margin-bottom: 10%;
   margin-top: 20px;
+}
+
+
+
+
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+/* .react-datepickerclose-icon::before, */
+.react-datepickerclose-icon::after {
+  background-color: #50AF49;
 }
